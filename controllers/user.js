@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const bcrypt = require("bcrypt");
 
 exports.postUser = async (req, res, next) => {
   if (req.body.name === "" && req.body.email == "" && req.body.pass == "") {
@@ -14,7 +15,7 @@ exports.postUser = async (req, res, next) => {
       console.log("user signed up");
     });
   } catch (err) {
-    res.status(500).json(err);
+    res.status(404).json(err);
     console.log("error in creating user");
   }
 };
@@ -28,6 +29,6 @@ exports.loginUser = (req, res, next) => {
     })
     .catch((err) => {
       console.log(err);
-      res.status(500).json(err);
+      res.status(404).json(err);
     });
 };
