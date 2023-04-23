@@ -1,18 +1,23 @@
-const login = document.getElementById("login");
-login.addEventListener("click", (e) => {
+const login = document.getElementById("login-id");
+login.addEventListener("submit", onSubmit);
+
+function onSubmit(e) {
   e.preventDefault();
-
-  const email = document.getElementById("email").value;
-  const pass = document.getElementById("password");
-
-  let user = { email, pass };
+  console.log("vammy");
+  let loginObj = {
+    email: document.getElementById("email").value,
+    password: document.getElementById("password").value,
+  };
 
   axios
-    .post("https://localhost:3000/user/login", user)
-    .then((user) => {
-      console.log(user.data);
+    .post("http://localhost:3000/user/login", loginObj)
+    .then((result) => {
+      console.log(result.data.message);
+      alert("Login Sucessfull");
     })
     .catch((err) => {
-      console.log(err);
+      console.log(err.response.data);
+      //document.body.innerHTML += `<button onclick="window.location.href = '../html/login.html'">Reload</button>`;
+      document.body.innerHTML += err.response.data.customMessage;
     });
-});
+}
