@@ -5,6 +5,7 @@ const sequelize = require("./utli/database");
 const bodyparser = require("body-parser");
 
 const userRoutes = require("./routes/userRoutes");
+const expenseRoutes = require("./routes/expense");
 
 const cors = require("cors");
 
@@ -15,6 +16,7 @@ app.use(cors());
 app.use(bodyparser.json());
 
 app.use(userRoutes);
+app.use("/expense", expenseRoutes);
 
 sequelize
   .sync()
