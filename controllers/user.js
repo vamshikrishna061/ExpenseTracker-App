@@ -50,21 +50,7 @@ exports.postLogin = async (req, res, next) => {
 
   try {
     const emailExists = await User.findAll({ where: { email: email } });
-
-    //   if (emailExists.length) {
-    //     if (password == emailExists[0].password) {
-    //       return res.status(201).json({ customMessage: "Success" });
-    //     } else {
-    //       return res.status(401).json({ customMessage: "User not authorized" });
-    //     }
-    //   } else {
-    //     return res.status(404).json({ customMessage: "User not found, SignUp" });
-    //   }
-    // } catch (err) {
-    //   return res.status(500).json(err);
-    //}
-
-    if (emailExists.length == 0) {
+     if (emailExists.length == 0) {
       return res.status(404).json({ customMessage: "User not found, SignUp" });
     }
     bcrypt.compare(password, emailExists[0].password, (error, response) => {

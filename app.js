@@ -3,12 +3,17 @@ const express = require("express");
 const sequelize = require("./utli/database");
 
 const bodyparser = require("body-parser");
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 const Expense = require("./models/expense");
 const user = require("./models/user");
+const Order = require("./models/order");
 
 const userRoutes = require("./routes/userRoutes");
 const expenseRoutes = require("./routes/expense");
+const purchaseRoutes = require("./routes/purchase");
 
 const cors = require("cors");
 
@@ -20,9 +25,13 @@ app.use(bodyparser.json());
 
 app.use(userRoutes);
 app.use("/expense", expenseRoutes);
+app.use("/purchase", purchaseRoutes);
 
 user.hasMany(Expense);
 Expense.belongsTo(user);
+
+user.hasMany(Order);
+Order.belongsTo(user)
 
 sequelize
   .sync()
