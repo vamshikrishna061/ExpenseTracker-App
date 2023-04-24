@@ -1,7 +1,8 @@
 const Expense = require("../models/expense");
+
 exports.getExpenses = async (req, res, next) => {
   try {
-    const all = await Expense.findAll();
+    const all = await Expense.findAll({ where: { userId: req.user.id } });
     res.json(all);
   } catch (err) {
     console.log(err);
@@ -17,6 +18,7 @@ exports.postExpense = async (req, res, next) => {
       amount: amount,
       description: description,
       category: category,
+      userId: req.user.id,
     });
     res.status(201).json(data);
   } catch (err) {
@@ -27,7 +29,9 @@ exports.postExpense = async (req, res, next) => {
 exports.deleteExpense = async (req, res, next) => {
   try {
     const expenseId = req.params.expenseId;
-    const expenseField = await Expense.findByPk(expenseId);
+    const expenseField = await Expense.findByPk(expenseId, {
+      where: { userId: req.user.id },
+    });
     await expenseField.destroy();
     res.status(201).json({ delete: expenseField });
   } catch (err) {
@@ -52,5 +56,5 @@ exports.editExpense = async (req, res, next) => {
     res.status(201).json(data);
   } catch (err) {
     res.status(500).json({ error: err });
-  }
+ }
 };

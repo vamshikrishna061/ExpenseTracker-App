@@ -12,9 +12,14 @@ function onSubmit(e) {
     category: document.getElementById("category").value,
   };
 
+  const token = localStorage.getItem("token");
+
   if (editingExpenseId === null) {
+    
     axios
-      .post("http:/localhost:3000/expense/post-expense", expenseObj)
+      .post("http:/localhost:3000/expense/post-expense", expenseObj, {
+        headers: {  "Authorization": token },
+      })
       .then((response) => {
         addNewLineElement(response.data);
       })
@@ -26,7 +31,8 @@ function onSubmit(e) {
     axios
       .post(
         `http:/localhost:3000/expense/edit-expense/${editingExpenseId}`,
-        expenseObj
+        expenseObj,
+        { headers: { "Authorization": token } }
       )
       .then((response) => {
         const parRes = JSON.parse(response.config.data);
@@ -41,8 +47,11 @@ function onSubmit(e) {
 }
 
 if (document.readyState == "loading") {
+  const token = localStorage.getItem("token");
   axios
-    .get("http:/localhost:3000/expense/get-expenses")
+    .get("http:/localhost:3000/expense/get-expenses", {
+      headers: { "Authorization": token },
+    })
     .then((result) => {
       result.data.forEach((element) => {
         addNewLineElement(element);
@@ -71,13 +80,16 @@ function addNewLineElement(expenseDetails) {
     )
   );
 
+  const token = localStorage.getItem("token");
+
   const delBtn = document.createElement("input");
   delBtn.id = "delete";
   delBtn.type = "button";
   delBtn.value = "delete";
   delBtn.addEventListener("click", () => {
     axios.get(
-      `http:/localhost:3000/expense/delete-expense/${expenseDetails.id}`
+      `http:/localhost:3000/expense/delete-expense/${expenseDetails.id}`,
+      { headers: { "Authorization": token } }
     );
     li.remove();
   });

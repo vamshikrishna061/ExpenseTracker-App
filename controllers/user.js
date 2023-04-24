@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 exports.postUser = async (req, res, next) => {
   const name = req.body.name;
@@ -35,6 +36,10 @@ exports.postUser = async (req, res, next) => {
   });
 };
 
+function generateAccessToken(id, name) {
+  return jwt.sign({ userId: id, name: name }, "secretwizardkey7412");
+}
+
 exports.postLogin = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -68,7 +73,12 @@ exports.postLogin = async (req, res, next) => {
         return res.sendStatus(500);
       }
       if (response) {
-        return res.status(201).json({ customMessage: "Success" });
+        return res
+          .status(201)
+          .json({
+            customMessage: "Success",
+            token: generateAccessToken(emailExists[0].id, emailExists[0].name),
+          });
       } else if (!response) {
         return res.status(401).json({ customMessage: "User not authorized" });
       }

@@ -11,9 +11,11 @@ function onSubmit(e) {
 
   axios
     .post("http://localhost:3000/user/login", loginObj)
-    .then((result) => {
-      console.log(result.data.message);
+    .then((response) => {
+      console.log(response.data.message);
       alert("Login Sucessfull");
+      localStorage.setItem("token", response.data.token);
+      window.location.href = "./expense.html";
     })
     .catch((err) => {
       console.log(err.response.data);
