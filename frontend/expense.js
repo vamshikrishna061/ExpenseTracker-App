@@ -93,7 +93,7 @@ function addNewLineElement(expenseDetails) {
 
   li.appendChild(
     document.createTextNode(
-      "$" +
+      "Rs" +
         expenseDetails.amount +
         " - Category:" +
         expenseDetails.category +
@@ -170,7 +170,7 @@ document.getElementById("premium").onclick = async function (e) {
     axios.post(
       "http://localhost:3000/purchase/update-transaction-status",
       { order_id: response.data.order.id },
-      { headers: { authorization: token } }
+      { headers: { 'Authorization': token } }
     );
     alert("something went wrong");
     rzrp1.close();
@@ -192,10 +192,9 @@ axios
       li.appendChild(document.createTextNode(` Name : ${res.data[i].name} ,`));
       li.appendChild(
         document.createTextNode(
-          `Total Expense : ${res.data[i].total_cost || 0}`
-        )
-      );
-      leaderboardElements.push(li);
+          `Total Expense :Rs ${res.data[i].totalExpense || 0}`));
+          leaderboardElements.push(li)
+      
     }
   })
   .catch((err) => {
