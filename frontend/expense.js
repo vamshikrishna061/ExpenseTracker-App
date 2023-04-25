@@ -192,7 +192,7 @@ axios
       li.appendChild(document.createTextNode(` Name : ${res.data[i].name} ,`));
       li.appendChild(
         document.createTextNode(
-          `Total Expense : ${res.data[i].total_amount || 0}`
+          `Total Expense : ${res.data[i].total_cost || 0}`
         )
       );
       leaderboardElements.push(li);
