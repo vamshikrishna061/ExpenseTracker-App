@@ -1,45 +1,49 @@
+
 const express = require("express");
-
-const sequelize = require("./utli/database");
-
-const bodyparser = require("body-parser");
-const dotenv = require('dotenv');
-
+const bodyParser = require("body-parser");
+const dotenv = require("dotenv");
 dotenv.config();
-
 const Expense = require("./models/expense");
-const user = require("./models/user");
+const User = require("./models/user");
 const Order = require("./models/order");
 
 const userRoutes = require("./routes/userRoutes");
 const expenseRoutes = require("./routes/expense");
 const purchaseRoutes = require("./routes/purchase");
-
-const cors = require("cors");
+const premiumRoutes = require("./routes/premium");
 
 const app = express();
 
+
+const cors = require("cors");
+const sequelize = require("./utli/database");
+
 app.use(cors());
+app.use(bodyParser.json());
 
-app.use(bodyparser.json());
 
-app.use(userRoutes);
+app.use("/user", userRoutes);
 app.use("/expense", expenseRoutes);
 app.use("/purchase", purchaseRoutes);
+app.use("/premium", premiumRoutes);
 
-user.hasMany(Expense);
-Expense.belongsTo(user);
+User.hasMany(Expense);
+Expense.belongsTo(User);
 
-user.hasMany(Order);
-Order.belongsTo(user)
+User.hasMany(Order);
+Order.belongsTo(User);
+
 
 sequelize
   .sync()
   //.sync({ force: true })
-  .then((result) => {
-    console.log(result);
-    app.listen(3000);
+  .then((res) => {
+    app.listen(3000, (err) => {
+      if (err) console.log(err);
+      console.log("Server is listening for requests");
+    });
   })
+
   .catch((err) => {
     console.log(err);
   });

@@ -1,4 +1,6 @@
 const Expense = require("../models/expense");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 exports.getExpenses = async (req, res, next) => {
   try {
