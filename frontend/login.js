@@ -3,7 +3,7 @@ login.addEventListener("submit", onSubmit);
 
 function onSubmit(e) {
   e.preventDefault();
-  console.log("vammy");
+  
   let loginObj = {
     email: document.getElementById("email").value,
     password: document.getElementById("password").value,
@@ -18,8 +18,10 @@ function onSubmit(e) {
       window.location.href = "./expense.html";
     })
     .catch((err) => {
-      console.log(err.response.data);
-      //document.body.innerHTML += `<button onclick="window.location.href = '../html/login.html'">Reload</button>`;
-      document.body.innerHTML += err.response.data.customMessage;
+      if(err.response.data.error){
+        document.body.innerHTML += `<span class='text-danger'>${err.response.data.error}</span>`;
+    } else {
+        console.log(err);
+    }
     });
 }

@@ -18,7 +18,10 @@ function onSubmit(e) {
       window.location.href = "./login.html";
     })
     .catch((err) => {
-      console.log(err);
-      //document.body.innerHTML += `<button onclick="window.location.href = '../html/signup.html'">Reload</button>`;
+      if(err.response.data.error){
+        document.body.innerHTML += `<span class='text-danger'>${err.response.data.error}</span>`;
+    } else {
+        console.log(err);
+    }
     });
 }

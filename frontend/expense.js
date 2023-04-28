@@ -1,5 +1,16 @@
 let editingExpenseId = null;
 const token = localStorage.getItem("token");
+const decodeToken = parseJwt(token);
+const isAdmin = decodeToken.isPremiumUser;
+const premiumId = document.getElementById('premium');
+const initialTrackerId = document.getElementById('initial-tracker');
+const reportTrackerId = document.getElementById('report-tracker');
+const leaderboardBtnId = document.getElementById('leaderboard-btn');
+const ifPremiumId = document.getElementById('if-premium');
+const dynamicPageId = document.getElementById('dynamic-pagination');
+const perpage = localStorage.getItem('perpage') || 5;
+const trackerId = document.getElementById('tracker');
+
 
 const expense = document.getElementById("expense");
 expense.addEventListener("submit", onSubmit);
@@ -12,6 +23,7 @@ function onSubmit(e) {
     description: document.getElementById("description").value,
     category: document.getElementById("category").value,
   };
+
 
   if (editingExpenseId === null) {
     axios
@@ -60,28 +72,21 @@ function parseJwt(token) {
 }
 
 function enablePremium(){
-  document.getElementById('premium').setAttribute('hidden','hidden');
-  document.getElementById('leaderboard-btn').removeAttribute('hidden');
-  document.getElementById('if-premium').innerHTML = '<p>You are now a Premium User</p>' + document.getElementById('if-premium').innerHTML;
+  premiumId.setAttribute('hidden','hidden');
+    leaderboardBtnId.removeAttribute('hidden');
+    ifPremiumId.innerHTML = '<p>Premium User</p>' + ifPremiumId.innerHTML;
 }
 
 let currentPage = 1;
-let lastFEPage=1;
-const perpage = localStorage.getItem('perpage') || 5;
-if (document.readyState == "loading") {
-  const decodeToken = parseJwt(token);
-  
-  const isAdmin = decodeToken.isPremiumUser;
+if (document.readyState == "loading") {  
   if(isAdmin){enablePremium()}
 
   axios.get(`http:/localhost:3000/expense/get-expenses/${currentPage}`, {params: {perpage}, headers: {'Authorization': token} } )
     .then((result) => {
-      console.log('result.data>>>>>',result.data);
       result.data.data.forEach(element => {
         addNewLineElement(element);
       });
       showPagination(result.data.info);
-            lastFEPage = result.data.info.lastPage;
     })
     .catch((err) => {
       console.log(err);
@@ -90,8 +95,7 @@ if (document.readyState == "loading") {
     });
 }
 
-const dynamicPage = document.getElementById('dynamic-pagination');
-dynamicPage.addEventListener('submit',(e)=>{
+dynamicPageId.addEventListener('submit',(e)=>{
     e.preventDefault();
     const perpage = document.getElementById('perpage').value;
     localStorage.setItem('perpage',perpage);
@@ -131,14 +135,10 @@ function showPagination({currentPage,hasNextPage,hasPreviousPage,nextPage,previo
 
 async function getPageExpenses(page){
   currentPage = page;
-  const tracker = document.getElementById('tracker');
-
-  const token = localStorage.getItem('token');
-
-  let response = await axios.get(`http://localhost:3000/expense/get-expenses/${page}`, {params:{perpage}, headers: { "Authorization": token}} );
-  console.log('fun: get page expenses>>',response.data.info);
+let response = await axios.get(`http://localhost:3000/expense/get-expenses/${page}`, {params:{perpage}, headers: { "Authorization": token}} );
+  
   if(response.status === 200){
-      tracker.innerHTML = ''
+      trackerId.innerHTML = ''
       for(let i=0;i<response.data.data.length;i++){
           addNewLineElement(response.data.data[i]);
       }
@@ -148,7 +148,7 @@ async function getPageExpenses(page){
 }
 
 function addNewLineElement(expenseDetails) {
-  const ul = document.getElementById("tracker");
+  
   const li = document.createElement("li");
 
   li.appendChild(
@@ -171,8 +171,9 @@ function addNewLineElement(expenseDetails) {
     axios.get(
       `http:/localhost:3000/expense/delete-expense/${expenseDetails.id}`,
       { headers: { 'Authorization': token } }
-    );
-    li.remove();
+    )
+    .then(()=>li.remove())
+        .catch(err=>console.log(err));
   });
   delBtn.style.border = "2px solid red";
   delBtn.style.marginRight = "5px";
@@ -192,10 +193,10 @@ function addNewLineElement(expenseDetails) {
   });
   editBtn.style.border = "2px solid green";
   li.appendChild(editBtn);
-  ul.appendChild(li);
+  trackerId.appendChild(li);
 }
 
-document.getElementById("premium").onclick = async function (e) {
+premiumId.onclick = async function (e) {
   const response = await axios.get(
     "http://localhost:3000/purchase/premium-membership",
     { headers: { Authorization: token } }
@@ -289,56 +290,53 @@ let reportDisplayed = false;
 axios.get('http://localhost:3000/expense/getAllUrl',{headers: {'Authorization' : token}})
 .then((res) => {
     if(res.status === 200){
-        console.log(res)
+        
         showUrls(res.data)
     }
 }).catch(err=> console.log(err));
 
 function showUrls(data){
-console.log('ShowUrls>>>',data.urls);
     data.urls.forEach(url => {
-        const li= document.createElement('a');
-        li.id = 'report-list-li';
-        li.href = `${url.fileURL}`;
-        li.appendChild(document.createTextNode(`${listno + 1}. ${url.filename.split('Expense')[1]}`));
-        reportList.append(li);
-        const lineBreak = document.createElement('br');
-        reportList.appendChild(lineBreak);
-        listno++
+      const aTag = document.createElement('a');
+      aTag.id = 'report-list-li';
+      aTag.href = `${url.fileURL}`;
+      aTag.appendChild(document.createTextNode(`${listno + 1}. ${url.filename.split('Expense')[1]}`));
+      reportList.append(aTag);
+      const lineBreak = document.createElement('br');
+      reportList.appendChild(lineBreak);
+      listno++;
     })
 }
 
 
-reportBtn.onclick = async (e) => {
+const reportDwnBtn = document.getElementById('report-dwn-btn');
+reportBtn.onclick = function (e) {
     e.preventDefault();
-    const decodeToken = parseJwt(token);
-    const isAdmin = decodeToken.isPremiumUser;
-
+    
     if(reportDisplayed){
         reportDisplayed = false;
-        document.getElementById('initial-tracker').removeAttribute('hidden');
+        initialTrackerId.removeAttribute('hidden');
         reportBtn.innerHTML = ' Expenses Report ';
-        document.getElementById('report-dwn-btn').setAttribute('hidden','hidden');
-        document.getElementById('report-tracker').setAttribute('hidden','hidden');
+        reportDwnBtn.setAttribute('hidden','hidden');
+        reportTrackerId.setAttribute('hidden','hidden');
+        dynamicPageId.removeAttribute('hidden');
 
     } else {
         reportDisplayed = true;
-        document.getElementById('initial-tracker').setAttribute('hidden','hidden');
+        initialTrackerId.setAttribute('hidden','hidden');
         reportBtn.innerHTML = 'Hide Expenses Report';
         if(isAdmin){
-        document.getElementById('report-dwn-btn').removeAttribute('hidden');
+          reportDwnBtn.removeAttribute('hidden');
         }
-        document.getElementById('report-tracker').removeAttribute('hidden');
+        reportTrackerId.removeAttribute('hidden');
+        dynamicPageId.setAttribute('hidden','hidden');
     }
 
 }
 
-
-const reportDwnBtn = document.getElementById('report-dwn-btn');
 reportDwnBtn.addEventListener('click', (e)=> {
     e.preventDefault();
     axios.get('http:localhost:3000/expense/download', { headers: { "authorization": token } }).then((response) => {
-            console.log(response);
             showUrlOnScreen(response.data.downloadUrlData);
             var a = document.createElement("a");
             a.href = response.data.fileURL;
@@ -351,7 +349,6 @@ reportDwnBtn.addEventListener('click', (e)=> {
 });
 
 function showUrlOnScreen(data){
-    console.log('showUrlOnScreen>>>' , data);
     const li= document.createElement('a');
     li.id = 'report-list-li';
     li.href = `${data.fileURL}`;
