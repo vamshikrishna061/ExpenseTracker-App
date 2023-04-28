@@ -1,5 +1,5 @@
-//const path = require('path');
-//const fs = require('fs');
+const path = require('path');
+const fs = require('fs');
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -22,16 +22,16 @@ const premiumRoutes = require("./routes/premium");
 const forgotPasswordRoutes = require("./routes/forgotpassword")
 
  const sequelize = require("./utli/database");
-// const accessLogStream = fs.createWriteStream(
-//   path.join(__dirname, 'access.log'),
-//   { flags: 'a' }
-// );
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, 'access.log'),
+  { flags: 'a' }
+);
 
 
 const app = express();
 app.use(helmet());
 app.use(cors());
-app.use(morgan('combined'));// { stream: accessLogStream }
+app.use(morgan('combined', { stream: accessLogStream }));
 app.use(bodyParser.json());
 
 
