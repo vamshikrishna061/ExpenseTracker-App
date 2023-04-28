@@ -1,129 +1,48 @@
 const Expense = require("../models/expense");
 const User = require('../models/user');
 const sequelize = require('../utli/database');
-//const jwt = require("jsonwebtoken");
-
-// exports.getExpenses = async (req, res, next) => {
-//   const sequelizeTransaction = await sequelize.transaction();
-//   try {
-//     const all = await Expense.findAll({ where: { userId: req.user.id }, transaction: sequelizeTransaction});
-    
-//     res.json(all);
-//     await sequelizeTransaction.commit();
-//   } catch (err) {
-   
-//     console.log(err);
-//     await sequelizeTransaction.rollback();
-//   }
-// };
-
-// exports.postExpense = async (req, res, next) => {
-//   const sequelizeTransaction = await sequelize.transaction();
-//   try {
-//     const amount = req.body.amount;
-//     const description = req.body.description;
-//     const category = req.body.category;
-//     const data = await Expense.create({
-//       amount: amount,
-//       description: description,
-//       category: category,
-//       userId: req.user.id},
-//       {transaction: sequelizeTransaction}
-//     );
-//     const tExpense = +req.user.totalExpense + +amount;
-//     User.update(
-//       {totalExpense: tExpense},
-//       {where: {id:req.user.id},
-//       transaction: sequelizeTransaction}
-//     ) 
-    
-//     res.status(201).json(data);
-//     await sequelizeTransaction.commit();
-//   } catch (err) {
-    
-//     res.status(500).json({ error: err });
-//     await sequelizeTransaction.rollback();
-//   }
-// };
-
-// exports.deleteExpense = async (req, res, next) => {
-//   const sequelizeTransaction = await sequelize.transaction();
-//   try {
-//     const expenseId = req.params.expenseId;
-//     const expenseField = await Expense.findByPk(expenseId, {where: { userId: req.user.id }, transaction: sequelizeTransaction})
-//     await expenseField.destroy({transaction: sequelizeTransaction});
-    
-
-//      const userTExpense = await User.findByPk(req.user.id,{
-//      attributes: ['totalExpense'],
-//       raw: true,
-//       transaction: sequelizeTransaction
-//    });
-
-//     const editedTotal = userTExpense.totalExpense - expenseField.dataValues.amount;
-//      await User.update({totalExpense: editedTotal}, {where:{id:req.user.id}, transaction: sequelizeTransaction})
-     
-//           res.status(201).json({ delete: expenseField });
-//           await sequelizeTransaction.commit();
-//    } catch (err) {
-     
-//      console.error(err);
-//      await sequelizeTransaction.rollback();
-//    }
-//  };
-
-// exports.editExpense = async (req, res, next) => {
-//   const sequelizeTransaction = await sequelize.transaction();
-//   try {
-//     const expenseId = req.params.expenseId;
-//     const amount = req.body.amount;
-//     const description = req.body.description;
-//     const category = req.body.category;
-
-//     const befExpense = await Expense.findByPk(expenseId,{
-//       attributes: ['amount'],
-//       raw: true,
-//       transaction: sequelizeTransaction
-//   });
-//   const chUser = await User.findByPk(req.user.dataValues.id,{
-//       attributes: ['totalExpense'],
-//       raw: true,
-//       transaction: sequelizeTransaction
-//   })
-  
-//   const updatedExpense = +chUser.totalExpense - +befExpense.amount + +amount;
-//   await User.update({ totalExpense: updatedExpense },{where: {id:req.user.dataValues.id}, transaction: sequelizeTransaction})
+const DownloadUrl = require('../models/downloadUrls');
+const UserServices = require('../services/UserServices');
+const S3services = require('../services/S3services');
 
 
-//     const data = await Expense.update(
-//       {
-//         amount: amount,
-//         description: description,
-//         category: category,
-//       },
-//       { where: { id: expenseId }, transaction: sequelizeTransaction });
-      
-//      res.status(201).json(data);
-//      sequelizeTransaction.commit();
-//   } catch (err) {
-    
-//     res.status(500).json({ error: err });
-//     sequelizeTransaction.rollback();
-//  }
-// };
+exports.getDownloadExpenses = async (req, res, next) => {
+    try {
+        const expenses = await UserServices.getExpenses(req);
+        const stringifiedExpenses = JSON.stringify(expenses);
+        const userId = req.user.id;
+        const filename = `${userId}Expense${new Date()}.txt`;
+        const fileURL = await S3services.uploadToS3(stringifiedExpenses,filename);
+
+        const downloadUrlData = await req.user.createDownloadUrl({
+            fileURL: fileURL,
+            filename
+        });
+
+        res.status(200).json({fileURL, downloadUrlData, success:true});
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({err,success:false,fileURL:''})
+    }
+}
 
 
-  
-      
-        
-  
+exports.getDownloadAllUrl = async(req,res,next) => {
+    try {
+        let urls = await req.user.getDownloadUrls();
+        if(!urls){
+            res.sttus(404).json({ message: 'no urls found'})
+        }
+        res.status(200).json({ urls, success: true})
+    } catch (error) {
+        res.status(500).json({error})
+    }
+}
 
-      
-  
+
 exports.getExpenses = async (req, res, next) => {
   try{
   const all = await Expense.findAll({where: {userId: req.user.id}})
-  // const all = await req.user.getExpenses()
       res.json(all);
   }catch(err) {
      console.log(err);

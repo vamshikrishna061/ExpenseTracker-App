@@ -14,4 +14,8 @@ router.get("/delete-expense/:expenseId",userAuth.authenticate,expenseController.
 
 router.post("/edit-expense/:expenseId",userAuth.authenticate,expenseController.editExpense);
 
+router.get('/download',userAuth.authenticate, expenseController.getDownloadExpenses);
+
+router.get('/getAllUrl',userAuth.authenticate,expenseController.getDownloadAllUrl);
+
 module.exports = router;

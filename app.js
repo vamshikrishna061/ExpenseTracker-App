@@ -7,6 +7,7 @@ const Expense = require("./models/expense");
 const User = require("./models/user");
 const Order = require("./models/order");
 const Forgotpassword = require("./models/forgotpasswords");
+const DownloadUrl = require('./models/downloadUrls')
 
 
 
@@ -44,6 +45,9 @@ Order.belongsTo(User);
 
 User.hasMany(Forgotpassword);
 Forgotpassword.belongsTo(User);
+
+User.hasMany(DownloadUrl);
+DownloadUrl.belongsTo(User);
 
 
 
