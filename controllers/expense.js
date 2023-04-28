@@ -43,7 +43,8 @@ exports.getDownloadAllUrl = async(req,res,next) => {
 exports.getExpenses = async (req, res, next) => {
   try{
     let page = req.params.pageNo || 1;
-        let Items_Per_Page = 5;
+    let Items_Per_Page = +req.query.perpage;
+    console.log('getExpenses>>>>> reload',req.query);
         const totalItems = await Expense.count({where: {userId: req.user.id}});
         const data = await req.user.getExpenses({offset: (page-1)*Items_Per_Page,limit: Items_Per_Page})
 
@@ -60,7 +61,7 @@ exports.getExpenses = async (req, res, next) => {
         });
     }catch(err) {
         console.log(err);
-        res.status(500).json({error:err});
+        res.status(500).json({err});
      }
  }
 exports.postExpense = async (req, res, next) => {
