@@ -5,7 +5,7 @@ const User = require("../models/user");
 const authenticate = (req, res, next) => {
   try {
     const token = req.header("Authorization");
-    const user = jwt.verify(token, "mysecretkey.987654321");
+    const user = jwt.verify(token, process.env.TOKEN_SECRET);
     User.findByPk(user.userId).then((user) => {
       req.user = user;
       next();
@@ -15,6 +15,7 @@ const authenticate = (req, res, next) => {
     return res.status(401).json({ sucess: false });
   }
 };
+
 
 module.exports = {
   authenticate,

@@ -28,6 +28,7 @@ const accessLogStream = fs.createWriteStream(
 );
 
 
+
 const app = express();
 app.use(helmet());
 app.use(cors());
@@ -60,7 +61,7 @@ sequelize
   .sync()
   //.sync({ force: true })
   .then((res) => {
-    app.listen(3000, (err) => {     //process.env.PORT_DEFAULT
+    app.listen(3000, (err) => {     
       if (err) console.log(err);
       console.log("Server is listening for requests");
     });

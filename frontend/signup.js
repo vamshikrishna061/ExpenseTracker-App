@@ -1,6 +1,7 @@
 const signup = document.getElementById("signup");
 signup.addEventListener("submit", onSubmit);
 
+
 function onSubmit(e) {
   e.preventDefault();
 

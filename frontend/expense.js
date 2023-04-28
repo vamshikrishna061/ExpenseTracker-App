@@ -357,4 +357,5 @@ function showUrlOnScreen(data){
     const lineBreak = document.createElement('br');
     reportList.appendChild(lineBreak);
     listno++;
+    
 }

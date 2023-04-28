@@ -60,6 +60,7 @@ exports.postForgotPassword = async (req,res,next) => {
     }
 }
 
+
 exports.getResetPassword = async (req,res,next) => {
     const id = req.params.id;
     

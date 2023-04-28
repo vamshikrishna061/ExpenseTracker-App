@@ -5,6 +5,7 @@ const User = require('../models/user');
 const sequelize = require("sequelize");
 
 
+
 exports.getLeaderBoard = async (req, res, next) => {
     try {
         const userLeaderBoardDetails = await User.findAll({

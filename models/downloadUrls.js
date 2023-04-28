@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../utli/database')
 
+
 const DownloadUrl = sequelize.define('downloadUrl', {
     id: {
         type: Sequelize.INTEGER,
@@ -18,5 +19,6 @@ const DownloadUrl = sequelize.define('downloadUrl', {
         allowNull:false,
     },
 })
+
 
 module.exports = DownloadUrl

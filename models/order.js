@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 const sequelize = require('../utli/database');
 
 
+
 const Order = sequelize.define('order',{
     id: {
         type: Sequelize.INTEGER,
@@ -14,5 +15,6 @@ const Order = sequelize.define('order',{
     orderid: Sequelize.STRING,
     status: Sequelize.STRING
 })
+
 
 module.exports = Order;
