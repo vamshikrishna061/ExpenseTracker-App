@@ -10,4 +10,5 @@ router.get('/premium-membership', userAuthentication.authenticate, purchaseContr
 
 router.post('/update-transaction-status', userAuthentication.authenticate, purchaseController.updateTransactionStatus)
 
+
 module.exports = router;

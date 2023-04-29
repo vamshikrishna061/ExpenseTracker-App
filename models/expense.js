@@ -2,6 +2,7 @@ const Sequelize = require("sequelize");
 
 const sequelize = require("../utli/database");
 
+
 const Expense = sequelize.define("expense", {
   id: {
     type: Sequelize.INTEGER,

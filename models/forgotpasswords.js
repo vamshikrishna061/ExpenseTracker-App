@@ -1,7 +1,6 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../utli/database');
 
-
 const Forgotpassword = sequelize.define('forgotpassword',{
     id: {
         type: Sequelize.UUID,

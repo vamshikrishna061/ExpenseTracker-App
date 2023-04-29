@@ -12,4 +12,5 @@ router.use(
   premiumController.getLeaderBoard
 );
 
+
 module.exports = router;

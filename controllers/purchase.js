@@ -30,7 +30,6 @@ const purchasepremium = async (req, res) => {
   }
 };
 
-
 const updateTransactionStatus = async (req, res, next) => {
   try {
     if (!req.body.payment_id) {

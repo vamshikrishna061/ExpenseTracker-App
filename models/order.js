@@ -1,8 +1,6 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../utli/database');
 
-
-
 const Order = sequelize.define('order',{
     id: {
         type: Sequelize.INTEGER,
